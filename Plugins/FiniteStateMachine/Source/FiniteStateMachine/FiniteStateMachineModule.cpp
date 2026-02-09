@@ -4,6 +4,3 @@
 #include "Modules/ModuleManager.h"
 
 IMPLEMENT_MODULE(FDefaultGameModuleImpl, FiniteStateMachine);
-
-DEFINE_LOG_CATEGORY(LogFiniteStateMachine)
-

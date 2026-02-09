@@ -52,8 +52,8 @@ TSharedRef<SWidget>	SStateMachineOutputPin::GetDefaultValueWidget()
 const FSlateBrush* SStateMachineOutputPin::GetPinBorder() const
 {
 	return (IsHovered())
-		? FEditorStyle::GetBrush(TEXT("Graph.StateNode.Pin.BackgroundHovered"))
-		: FEditorStyle::GetBrush(TEXT("Graph.StateNode.Pin.Background"));
+		? FAppStyle::GetBrush(TEXT("Graph.StateNode.Pin.BackgroundHovered"))
+		: FAppStyle::GetBrush(TEXT("Graph.StateNode.Pin.Background"));
 }
 
 
@@ -86,7 +86,7 @@ void SFSMStateNode::UpdateGraphNode()
 		.VAlign(VAlign_Center)
 		[
 			SNew(SBorder)
-				.BorderImage(FEditorStyle::GetBrush("Graph.StateNode.Body"))
+				.BorderImage(FAppStyle::GetBrush("Graph.StateNode.Body"))
 				.Padding(0)
 				.BorderBackgroundColor(this, &SFSMStateNode::GetBorderBackgroundColor)
 				[
@@ -107,7 +107,7 @@ void SFSMStateNode::UpdateGraphNode()
 						.Padding(10.0f)
 						[
 							SNew(SBorder)
-								.BorderImage(FEditorStyle::GetBrush("Graph.StateNode.ColorSpill"))
+								.BorderImage(FAppStyle::GetBrush("Graph.StateNode.ColorSpill"))
 								.BorderBackgroundColor(TitleShadowColor)
 								.HAlign(HAlign_Center)
 								.VAlign(VAlign_Center)
@@ -137,7 +137,7 @@ void SFSMStateNode::UpdateGraphNode()
 												.AutoHeight()
 												[
 													SAssignNew(InlineEditableText, SInlineEditableTextBlock)
-														.Style(FEditorStyle::Get(), "Graph.StateNode.NodeTitleInlineEditableText")
+														.Style(FAppStyle::Get(), "Graph.StateNode.NodeTitleInlineEditableText")
 														.Text(NodeTitle.Get(), &SNodeTitle::GetHeadTitle)
 														.OnVerifyTextChanged(this, &SFSMStateNode::OnVerifyNameTextChanged)
 														.OnTextCommitted(this, &SFSMStateNode::OnNameTextCommited)
@@ -198,5 +198,5 @@ FSlateColor SFSMStateNode::GetBorderBackgroundColor() const
 
 const FSlateBrush* SFSMStateNode::GetNameIcon() const
 {
-	return FEditorStyle::GetBrush(TEXT("Graph.StateNode.Icon"));
+	return FAppStyle::GetBrush(TEXT("Graph.StateNode.Icon"));
 }

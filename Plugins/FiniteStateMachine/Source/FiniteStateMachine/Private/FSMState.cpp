@@ -5,7 +5,7 @@
 #include "FiniteStateMachine.h"
 #include "FSMTransition.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogFiniteStateMachine, Log, All);
+#include "LogFiniteStateMachine.h"
 
 FFSMStateClass::FFSMStateClass()
 {

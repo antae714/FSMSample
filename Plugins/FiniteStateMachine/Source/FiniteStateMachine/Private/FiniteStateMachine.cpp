@@ -5,8 +5,7 @@
 #include "FSMState.h"
 #include "FSMTransition.h"
 #include "FSMBlueprintGeneratedClass.h"
-
-DECLARE_LOG_CATEGORY_EXTERN(LogFiniteStateMachine, Log, All);
+#include "LogFiniteStateMachine.h"
 
 UFiniteStateMachine::UFiniteStateMachine()
 {

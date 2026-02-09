@@ -31,7 +31,7 @@ void SFSMStateEntryNode::UpdateGraphNode()
 		.VAlign(VAlign_Center)
 		[
 			SNew(SBorder)
-				.BorderImage(FEditorStyle::GetBrush("Graph.StateNode.Body"))
+				.BorderImage(FAppStyle::GetBrush("Graph.StateNode.Body"))
 				.Padding(0)
 				.BorderBackgroundColor(this, &SFSMStateEntryNode::GetBorderBackgroundColor)
 				[

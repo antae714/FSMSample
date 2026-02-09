@@ -12,7 +12,7 @@ struct FINITESTATEMACHINEEDITOR_API FFSMGraphSchemaAction : public FEdGraphSchem
 {
 	GENERATED_USTRUCT_BODY()
 
-	UEdGraphNode* NodeTemplate;
+	TObjectPtr<UEdGraphNode> NodeTemplate;
 
 	FFSMGraphSchemaAction()
 		: FEdGraphSchemaAction()

@@ -32,7 +32,7 @@ void SFSMTransitionNode::UpdateGraphNode()
 				+ SOverlay::Slot()
 				[
 					SNew(SImage)
-						.Image(FEditorStyle::GetBrush("Graph.TransitionNode.ColorSpill"))
+						.Image(FAppStyle::GetBrush("Graph.TransitionNode.ColorSpill"))
 						.ColorAndOpacity(this, &SFSMTransitionNode::GetTransitionColor)
 				]
 				+ SOverlay::Slot()
@@ -142,7 +142,7 @@ FSlateColor SFSMTransitionNode::GetTransitionColor() const
 
 const FSlateBrush* SFSMTransitionNode::GetTransitionIconImage() const
 {
-	return FEditorStyle::GetBrush("Graph.TransitionNode.Icon_Inertialization");
+	return FAppStyle::GetBrush("Graph.TransitionNode.Icon_Inertialization");
 	//UFSMTransitionNode* TransNode = CastChecked<UFSMTransitionNode>(GraphNode);
 	//return (TransNode->LogicType == ETransitionLogicType::TLT_Inertialization)
 	//	? FEditorStyle::GetBrush("Graph.TransitionNode.Icon_Inertialization")
