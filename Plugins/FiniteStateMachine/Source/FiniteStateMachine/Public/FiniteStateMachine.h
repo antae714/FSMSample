@@ -25,7 +25,7 @@ public:
 	FFSMTransition* FindFSMTransition(FGuid guid);
 
 public:
-	void Tick(float DeltaTime);
+	void Tick(float DeltaTime, int32 MaxTransitionsPerFrame);
 	void BeginPlay();
 	void EndPlay();
 
@@ -41,9 +41,6 @@ private:
 	void TransitionState();
 
 public:
-	/** 한프레임에 전이가능 횟수 입니다.*/
-	UPROPERTY(EditAnywhere, Category = Settings)
-	int32 MaxTransitionsPerFrame;
 
 protected:
 	TArray<FFSMState> States;

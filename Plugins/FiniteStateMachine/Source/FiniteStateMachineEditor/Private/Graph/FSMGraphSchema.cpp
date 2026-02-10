@@ -7,12 +7,9 @@
 
 #include "StateNode/FSMStateEntryNode.h"
 #include "StateNode/FSMStateNode.h"
-#include "StateNode/FSMProcessNode.h"
-
-#include "K2Node_FunctionEntry.h"
+#include "StateNode/FSMTransitionNode.h"
 
 #include "Kismet2/BlueprintEditorUtils.h"
-#include "StateNode/FSMTransitionNode.h"
 
 
 #define LOCTEXT_NAMESPACE "FSMSSchema"
@@ -79,25 +76,18 @@ void UFSMGraphSchema::CreateDefaultNodesForGraph(UEdGraph& Graph) const
 	UFSMProcessNode* processNode = nullptr;
 
 	Graph.Nodes.Empty();
-
+	UFSMGraph* FSMGraph = CastChecked<UFSMGraph>(&Graph);
+	if (!FSMGraph)
+	{
+		ensure(false);
+		return;
+	}
 	{
 		FGraphNodeCreator<UFSMStateEntryNode> NodeCreator(Graph);
 		entryNode = NodeCreator.CreateNode();
 		NodeCreator.Finalize();
 		SetNodeMetaData(entryNode, FNodeMetadata::DefaultGraphNode);
-	}
-
-	{
-		FGraphNodeCreator<UFSMProcessNode> NodeCreator(Graph);
-		processNode = NodeCreator.CreateNode();
-		NodeCreator.Finalize();
-		SetNodeMetaData(processNode, FNodeMetadata::DefaultGraphNode);
-	}
-
-	if (UFSMGraph* FSMGraph = CastChecked<UFSMGraph>(&Graph)) 
-	{
 		FSMGraph->EntryNode = entryNode;
-		FSMGraph->ProcessNode = processNode;
 	}
 }
 

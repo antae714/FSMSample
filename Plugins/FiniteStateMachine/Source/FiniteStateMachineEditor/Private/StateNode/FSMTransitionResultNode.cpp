@@ -12,7 +12,7 @@
 #include "FSMBlueprintGeneratedClass.h"
 #include "KismetCompiler.h"
 
-
+// FKCHandler_FunctionResult
 class FKCHandler_FSMTransitionResult : public FNodeHandlingFunctor
 {
 public:

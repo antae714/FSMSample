@@ -11,6 +11,7 @@
 #include "FiniteStateMachine.h"
 #include "FSMBlueprintGeneratedClass.h"
 
+//FKCHandler_EventEntry
 class FKCHandler_FSMEventEntry : public FNodeHandlingFunctor
 {
 public:

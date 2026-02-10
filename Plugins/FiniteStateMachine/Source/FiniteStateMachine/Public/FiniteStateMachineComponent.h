@@ -36,5 +36,8 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	/** 한프레임에 전이가능 횟수 입니다.*/
+	UPROPERTY(EditAnywhere, Category = Settings)
+	int32 MaxTransitionsPerFrame;
 		
 };

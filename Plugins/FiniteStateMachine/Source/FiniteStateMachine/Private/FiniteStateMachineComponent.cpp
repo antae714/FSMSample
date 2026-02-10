@@ -7,7 +7,7 @@
 UFiniteStateMachineComponent::UFiniteStateMachineComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-
+	MaxTransitionsPerFrame = 3;
 }
 
 void UFiniteStateMachineComponent::StartFiniteStateMachine()
@@ -54,7 +54,7 @@ void UFiniteStateMachineComponent::TickComponent(float DeltaTime, ELevelTick Tic
 
 	if (FSMInstance)
 	{
-		FSMInstance->Tick(DeltaTime);
+		FSMInstance->Tick(DeltaTime, MaxTransitionsPerFrame);
 	}
 	else
 	{

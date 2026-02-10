@@ -22,6 +22,4 @@ class FINITESTATEMACHINEEDITOR_API UFSMGraph : public UEdGraph
 public:
 	UPROPERTY()
 	TObjectPtr<UFSMStateEntryNode> EntryNode;
-	UPROPERTY()
-	TObjectPtr<UFSMProcessNode> ProcessNode;
 };

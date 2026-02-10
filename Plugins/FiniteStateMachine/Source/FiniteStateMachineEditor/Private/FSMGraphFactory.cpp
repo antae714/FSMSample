@@ -15,8 +15,6 @@
 #include "StateNode/FSMTransitionNode.h"
 #include "StateNode/FSMTransitionResultNode.h"
 
-#include "StateNode/FSMProcessNode.h"
-
 #include "SlateNode/SFSMStateEntryNode.h"
 #include "SlateNode/SFSMStateNode.h"
 #include "SlateNode/SFSMStateNode_Base.h"
@@ -70,10 +68,6 @@ TSharedPtr<class SGraphNode> FFSMGraphNodeFactory::CreateNode(UEdGraphNode* InNo
 		{
 			return SNew(SFSMTransitionNode, BaseStateNode);
 		}
-	}
-	else if (UFSMProcessNode* ProcesNode = Cast<UFSMProcessNode>(InNode))
-	{
-		return SNew(STransparentGraphNode, InNode);
 	}
 	else if (Cast<UK2Node_FunctionEntry>(InNode) && Cast<UFSMTransitionGraph>(InNode->GetGraph()))
 	{

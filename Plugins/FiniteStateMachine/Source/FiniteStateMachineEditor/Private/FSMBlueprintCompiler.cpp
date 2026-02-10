@@ -10,9 +10,10 @@
 #include "EdGraphUtilities.h"
 
 #include "StateNode/FSMStateNode_Base.h"
-#include "StateNode/FSMProcessNode.h"
 #include "StateNode/FSMStateNode.h"
 #include "StateNode/FSMTransitionNode.h"
+#include "StateNode/FSMStateEntryNode.h"
+#include "StateNode/FSMTransitionResultNode.h"
 
 
 
@@ -75,7 +76,7 @@ void FFSMKismetCompilerContext::SpawnNewClass(const FString& NewClassName)
 
 bool FFSMKismetCompilerContext::IsNodePure(const UEdGraphNode* Node) const
 {
-	if(Node->IsA<UFSMStateNode_Base>() || Node->IsA<UFSMProcessNode>())
+	if(Node->IsA<UFSMStateNode_Base>())
 	{
 		return true;
 	}
@@ -92,29 +93,31 @@ void FFSMKismetCompilerContext::MergeUbergraphPagesIn(UEdGraph* Ubergraph)
 {
 	Super::MergeUbergraphPagesIn(Ubergraph);
 
-	UEdGraph* rootFSMGraph = GetBlueprint<UFSMBlueprint>()->RootFSMGraph;
-	if ((rootFSMGraph))
+	UEdGraph* RootFSMGraph = GetBlueprint<UFSMBlueprint>()->RootFSMGraph;
+	if (RootFSMGraph)
 	{
 		TArray<UFSMStateNode*> nodes;
-		rootFSMGraph->GetNodesOfClass<UFSMStateNode>(nodes);
+		RootFSMGraph->GetNodesOfClass<UFSMStateNode>(nodes);
 		for (auto& item : nodes)
 		{
 			if (UEdGraph* boundgraph = item->GetBoundGraph())
 			{
-				FEdGraphUtilities::CloneAndMergeGraphIn(Ubergraph, boundgraph, MessageLog, /*bRequireSchemaMatch=*/ true, /*bIsCompiling*/ true);
+				MergeGraphIntoUbergraph(boundgraph, Ubergraph);
 			}
 		}
 	}
+
 }
 
 void FFSMKismetCompilerContext::CreateFunctionList()
 {
 	Super::CreateFunctionList();
-	UEdGraph* rootFSMGraph = GetBlueprint<UFSMBlueprint>()->RootFSMGraph;
-	if ((rootFSMGraph))
+	UEdGraph* RootFSMGraph = GetBlueprint<UFSMBlueprint>()->RootFSMGraph;
+	UFSMBlueprintGeneratedClass* BPClass = Cast<UFSMBlueprintGeneratedClass>(NewClass);
+	if (RootFSMGraph && BPClass)
 	{
 		TArray<UFSMTransitionNode*> nodes;
-		rootFSMGraph->GetNodesOfClass<UFSMTransitionNode>(nodes);
+		RootFSMGraph->GetNodesOfClass<UFSMTransitionNode>(nodes);
 		for (auto& item : nodes)
 		{
 			if (UEdGraph* boundgraph = item->GetBoundGraph())
@@ -122,6 +125,64 @@ void FFSMKismetCompilerContext::CreateFunctionList()
 				ProcessOneFunctionGraph(boundgraph);
 			}
 		}
+
+		BPClass->States.Empty();
+		BPClass->Transitions.Empty();
+
+
+		TArray<UFSMStateNode_Base*> StateNodeArray;
+		RootFSMGraph->GetNodesOfClass<UFSMStateNode_Base>(StateNodeArray);
+		for (auto& StateNode : StateNodeArray)
+		{
+			if (UFSMStateEntryNode* EntryNode = Cast<UFSMStateEntryNode>(StateNode))
+			{
+				if (!EntryNode->GetOutputPin()->LinkedTo.IsEmpty())
+				{
+					BPClass->EnteryStateGUID = EntryNode->GetOutputPin()->LinkedTo[0]->GetOwningNode()->NodeGuid;
+				}
+				else
+				{
+					ensure(false);
+				}
+			}
+			else if (UFSMTransitionNode* TransitionNode = Cast<UFSMTransitionNode>(StateNode))
+			{
+				int index = BPClass->Transitions.Emplace(TransitionNode->GetNodeName(), TransitionNode->NodeGuid);
+				FFSMTransitionClass& FSMTransitionClass = BPClass->Transitions[index];
+				FSMTransitionClass.NextNodeGUID = TransitionNode->GetNextState()->NodeGuid;
+			}
+			else if (UFSMStateNode* FSMStateNode = Cast<UFSMStateNode>(StateNode))
+			{
+				int index = BPClass->States.Emplace(FSMStateNode->GetNodeName(), FSMStateNode->NodeGuid);
+				FFSMStateClass& FSMStateClass = BPClass->States[index];
+
+				for (auto& item : FSMStateNode->GetOutputPin()->LinkedTo)
+				{
+					UFSMTransitionNode* transitionNode = Cast<UFSMTransitionNode>(item->GetOwningNode());
+					FSMStateClass.ConnectedTransitionGUID.Add(transitionNode->NodeGuid);
+				}
+			}
+			else if (UFSMTransitionResultNode* TransitionResultNode = Cast<UFSMTransitionResultNode>(StateNode))
+			{
+
+				UFunction* findfuction = BPClass->FindFunctionByName(TransitionResultNode->transitionName);
+				if (!findfuction)
+				{
+					return;
+				}
+
+				FFSMTransitionClass* transtion = BPClass->Transitions.FindByKey(TransitionResultNode->transitionGuid);
+				if (!transtion)
+				{
+					return;
+				}
+				transtion->TransitionCondition = findfuction;
+
+				BPClass->RemoveFunctionFromFunctionMap(findfuction);
+			}
+			//StateNode->Compile(Context);
+		}
+
 	}
 
 
@@ -129,16 +190,6 @@ void FFSMKismetCompilerContext::CreateFunctionList()
 
 void FFSMKismetCompilerContext::CompileFunction(FKismetFunctionContext& Context)
 {
-	UFSMProcessNode* processNode = nullptr;
-	int index = 0;
-	
-	Context.LinearExecutionList.FindItemByClass<UFSMProcessNode>(&processNode, &index);
-	Context.LinearExecutionList.Swap(0, index);
-	for (int i = 1; i < index; i++)
-	{
-		Context.LinearExecutionList.Swap(i, index);
-	}
-
 	Super::CompileFunction(Context);
 }
 

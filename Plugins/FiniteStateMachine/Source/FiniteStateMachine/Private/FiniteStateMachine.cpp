@@ -36,7 +36,7 @@ FFSMTransition* UFiniteStateMachine::FindFSMTransition(FGuid guid)
 	return Transitions.FindByKey(guid);
 }
 
-void UFiniteStateMachine::Tick(float DeltaTime)
+void UFiniteStateMachine::Tick(float DeltaTime, int32 MaxTransitionsPerFrame)
 {
 	K2_TickEvent(DeltaTime);
 
@@ -94,8 +94,11 @@ void UFiniteStateMachine::BeginPlay()
 
 void UFiniteStateMachine::EndPlay()
 {
-	CurrrentState->ExecuteStateExit();
-	CurrrentState = nullptr;
+	if (CurrrentState)
+	{
+		CurrrentState->ExecuteStateExit();
+		CurrrentState = nullptr;
+	}
 
 	States.Empty();
 	Transitions.Empty();
